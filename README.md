@@ -30,6 +30,13 @@ display typography, and emphasis on trucking imagery.
   Started Working → 14 Days Completed → Hired & Paid. Plus a terminal
   **Rejected** state.
 
+## Deploying to Hostinger
+
+See [HOSTINGER.md](./HOSTINGER.md) for step-by-step instructions covering
+both a Hostinger VPS and a Hostinger Premium/Business/Cloud plan with
+the Node.js app selector. (Basic PHP-only shared hosting cannot run this
+app.)
+
 ## Local development
 
 ```bash
@@ -41,7 +48,7 @@ cp .env.example .env
 # Set ADMIN_EMAIL, ADMIN_PASSWORD, SESSION_SECRET (32+ chars)
 
 # 3. Create the SQLite database and tables
-npx prisma migrate dev --name init
+npx prisma db push
 
 # 4. Run the dev server
 npm run dev
