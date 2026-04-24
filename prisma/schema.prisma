@@ -1,0 +1,72 @@
+// Prisma schema for OTR Express Referrals.
+// Default provider is SQLite for simple local/dev deployment. For production,
+// switch provider to "postgresql" and point DATABASE_URL at a managed Postgres.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Referrer {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  phone     String
+  createdAt DateTime   @default(now())
+  referrals Referral[]
+}
+
+model Referral {
+  id               String        @id @default(cuid())
+  driverName       String
+  driverEmail      String
+  driverPhone      String
+  status           String        @default("SUBMITTED")
+  rejectionReason  String?
+  startedWorkingAt DateTime?
+  payoutEligibleAt DateTime?
+  paidAt           DateTime?
+  referrerId       String
+  referrer         Referrer      @relation(fields: [referrerId], references: [id])
+  comments         Comment[]
+  stageUpdates     StageUpdate[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([referrerId])
+  @@index([status])
+}
+
+model Comment {
+  id                String   @id @default(cuid())
+  referralId        String
+  referral          Referral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  author            String   @default("ADMIN") // ADMIN | SYSTEM
+  body              String
+  visibleToReferrer Boolean  @default(true)
+  createdAt         DateTime @default(now())
+
+  @@index([referralId])
+}
+
+model StageUpdate {
+  id         String   @id @default(cuid())
+  referralId String
+  referral   Referral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  status     String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([referralId])
+}
