@@ -1,235 +1,146 @@
-# Deploying to Hostinger
+# Deploying to Hostinger (PHP + MySQL)
 
-This app is a Next.js 14 server-rendered application with a Prisma database.
-It needs a **Node.js runtime** to run. That means:
+This app runs on plain PHP 8 with a MySQL database. It works on **any
+Hostinger plan that includes PHP and MySQL** — no Node.js required.
 
-| Hostinger plan | Supported? |
-| --- | --- |
-| Shared (PHP-only, "Single/Premium Web Hosting" without Node.js) | No |
-| Premium / Business / Cloud Hosting with **Node.js** selector | Yes |
-| **VPS** (KVM 1/2/4/…) with Ubuntu/Debian | Yes — recommended |
+The walkthrough below assumes:
+- You own `otrexpressgroup.com` in hPanel.
+- You've already created a subdomain `referrals.otrexpressgroup.com`.
+  Hostinger auto-created a folder for it, typically something like
+  `domains/otrexpressgroup.com/public_html/referrals/`.
 
-If you're on a plan without Node.js, upgrade or switch to a VPS before
-continuing.
+## Step 1 — Create the MySQL database
 
----
+1. hPanel → **Databases → Management** → **New MySQL database**.
+2. Fill in:
+   - Database name: `u000000000_referrals` (Hostinger prefixes with your user ID)
+   - Username: `u000000000_referrals`
+   - Password: generate and copy it somewhere safe.
+3. Click **Create**. Note:
+   - **Host** (usually `localhost`)
+   - **Database name**
+   - **Username**
+   - **Password**
 
-## Option A — Hostinger VPS (recommended)
+You'll need these in Step 4.
 
-Give yourself the most reliable environment. Works with SQLite or a managed
-database.
+## Step 2 — Upload the code
 
-### 1. Prepare the VPS
+You have two options.
 
-```bash
-# SSH into the VPS
-ssh root@your-vps-ip
+### Option A — Connect GitHub (recommended; deploys on every push)
 
-# Install Node 20 LTS
-curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-apt-get install -y nodejs git nginx
+1. Push this repo to GitHub (branch `claude/driver-referral-program-wkcG0`
+   or whatever branch you want to deploy).
+2. hPanel → **Advanced → Git** → **Create repository**:
+   - **Repository address**:
+     - Public repo: `https://github.com/pzabile/otrexpressreferals.git`
+     - Private repo: `git@github.com:pzabile/otrexpressreferals.git` — Hostinger shows a public key, add it to GitHub as a **Deploy key** (Settings → Deploy keys → Add deploy key).
+   - **Branch**: your deploy branch.
+   - **Install path**: the subdomain folder, e.g. `domains/otrexpressgroup.com/public_html/referrals`.
+3. Click **Create**. Hostinger clones the repo into that folder.
+4. Optional — turn on auto-deploy: open the repo in hPanel → copy the
+   **Webhook URL** → on GitHub add a webhook (Settings → Webhooks) with
+   that URL and the "push" event.
 
-# Install pm2 globally to keep the app alive
-npm install -g pm2
+Now every `git push` on your laptop pulls automatically on Hostinger.
+
+### Option B — Upload via File Manager
+
+hPanel → **File Manager** → open your subdomain folder → upload all files
+from this repo into it. Don't forget the hidden files (`.htaccess`,
+`.gitignore`).
+
+## Step 3 — Create `config.php`
+
+In File Manager, copy `config.example.php` to `config.php` (right-click →
+Copy). Open `config.php` in the editor and fill in:
+
+```php
+return [
+    'db_host'  => 'localhost',
+    'db_port'  => 3306,
+    'db_name'  => 'u000000000_referrals',
+    'db_user'  => 'u000000000_referrals',
+    'db_pass'  => 'your-database-password',
+    'db_charset' => 'utf8mb4',
+
+    'site_name'       => 'OTR Express Driver Referrals',
+    'site_url'        => 'https://referrals.otrexpressgroup.com',
+    'referral_bounty' => 500,
+
+    'session_name'    => 'otr_ref_sess',
+    'app_secret'      => 'GENERATE-A-LONG-RANDOM-STRING-32-CHARS-OR-MORE',
+];
 ```
 
-### 2. Get the code
+For `app_secret`, generate something random. You can use
+[random.org](https://www.random.org/strings/?num=1&len=32&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new)
+or any password generator — just make it 32+ characters of gibberish.
 
-```bash
-cd /var/www
-git clone <your-repo-url> otr-referrals
-cd otr-referrals
-```
+`config.php` is in `.gitignore`, so it will never leave your server —
+that's on purpose.
 
-### 3. Configure environment
+## Step 4 — Run the install wizard
 
-```bash
-cp .env.example .env
-nano .env
-```
+Open `https://referrals.otrexpressgroup.com/install.php` in your browser.
 
-Set at minimum:
+1. It confirms the DB credentials it will use.
+2. Enter your admin email and a strong password (min 8 chars).
+3. Click **Run Install**.
 
-```
-DATABASE_URL="file:./prisma/prod.db"
-ADMIN_EMAIL="you@yourdomain.com"
-ADMIN_PASSWORD="a-strong-password"
-SESSION_SECRET="$(openssl rand -hex 32)"
-NEXT_PUBLIC_SITE_URL="https://yourdomain.com"
-NEXT_PUBLIC_REFERRAL_BOUNTY="500"
-```
+It creates all tables and your admin account.
 
-Replace `SESSION_SECRET` with a long random string (the `openssl` command
-above prints one).
+**Then delete `install.php` from your server** (File Manager → right-click
+→ Delete). It should never be reachable in production.
 
-### 4. Install, build, create the database
+## Step 5 — Enable HTTPS
 
-```bash
-npm install
-npx prisma db push          # creates SQLite file and tables
-npm run build
-```
+hPanel → **SSL** → install a free SSL certificate for
+`referrals.otrexpressgroup.com`.
 
-### 5. Start with PM2
+## Step 6 — Try it
 
-```bash
-pm2 start npm --name otr-referrals -- run start
-pm2 save
-pm2 startup                 # follow the printed instruction
-```
+- `https://referrals.otrexpressgroup.com/` — landing page
+- `https://referrals.otrexpressgroup.com/refer.php` — referral form
+- `https://referrals.otrexpressgroup.com/status.php` — status lookup
+- `https://referrals.otrexpressgroup.com/admin/` — admin console
 
-The app is now listening on `http://127.0.0.1:3000`.
+Log in at `/admin/login.php` with the credentials you set in the wizard.
 
-### 6. Put Nginx in front with HTTPS
+## Updating the site later
 
-Create `/etc/nginx/sites-available/otr-referrals`:
+**If you used Git (Option A):**
 
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com www.yourdomain.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-Enable and reload:
-
-```bash
-ln -s /etc/nginx/sites-available/otr-referrals /etc/nginx/sites-enabled/
-nginx -t && systemctl reload nginx
-```
-
-Add HTTPS with Let's Encrypt:
-
-```bash
-apt-get install -y certbot python3-certbot-nginx
-certbot --nginx -d yourdomain.com -d www.yourdomain.com
-```
-
-Done. Visit `https://yourdomain.com`.
-
-### Updating
-
-```bash
-cd /var/www/otr-referrals
-git pull
-npm install
-npx prisma db push
-npm run build
-pm2 restart otr-referrals
-```
-
----
-
-## Option B — Hostinger Node.js shared hosting (Premium / Business / Cloud)
-
-Hostinger's shared plans with the **Node.js** selector run your app under
-Phusion Passenger. This project ships a `server.js` made for Passenger.
-
-### 1. Create a Node.js app in hPanel
-
-1. hPanel → **Advanced → Node.js** (or **Website → Node.js**).
-2. Click **Create application**.
-3. Node.js version: **20.x** (or latest LTS offered).
-4. Application mode: **Production**.
-5. Application root: e.g. `public_html/referrals` (create this folder in File
-   Manager if needed).
-6. Application URL: pick your domain/subdomain.
-7. **Application startup file**: `server.js`
-8. Save.
-
-### 2. Use a database Hostinger supports
-
-SQLite will technically work but the database file lives in your hosting
-account's file system. For reliability, switch to **MySQL** (Hostinger gives
-you MySQL in hPanel).
-
-1. hPanel → **Databases → Management** → create a new database + user.
-2. Note the host, database name, username, password.
-3. In this project, edit `prisma/schema.prisma`:
-
-   ```prisma
-   datasource db {
-     provider = "mysql"
-     url      = env("DATABASE_URL")
-   }
+1. On your laptop:
    ```
-
-4. In your `.env` set:
-
+   git add -A && git commit -m "…" && git push
    ```
-   DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DBNAME"
-   ```
+2. On Hostinger: hPanel → Git → click **Deploy** (or the webhook does it
+   automatically).
+3. If `sql/schema.sql` changed, open phpMyAdmin (hPanel → Databases →
+   phpMyAdmin → your DB → **Import**) and import the new schema. (The
+   `CREATE TABLE IF NOT EXISTS` statements are idempotent.)
 
-(If you prefer to stay on SQLite, skip step 3 and set
-`DATABASE_URL="file:./prisma/prod.db"`.)
+**If you used File Manager (Option B):**
 
-### 3. Upload the code
+Just re-upload the changed files.
 
-Either connect git in hPanel or upload the folder via File Manager / SFTP.
-Do **not** upload `node_modules` or `.next` — Hostinger will build them.
-
-### 4. Set environment variables
-
-Back in hPanel → Node.js app → **Environment variables**, add:
-
-```
-DATABASE_URL=...
-ADMIN_EMAIL=you@yourdomain.com
-ADMIN_PASSWORD=a-strong-password
-SESSION_SECRET=a-long-random-string-32-chars-or-more
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
-NEXT_PUBLIC_REFERRAL_BOUNTY=500
-NODE_ENV=production
-```
-
-### 5. Install dependencies, create tables, build
-
-From the Node.js app page, open the **Terminal** (or SSH in and `cd` to the
-app root), then:
-
-```bash
-npm install
-npx prisma db push
-npm run build
-```
-
-### 6. Start / restart
-
-Use the **Restart** button in the Node.js app page. Passenger will run
-`server.js`. Visit your domain.
-
----
-
-## Files that matter for Hostinger
-
-- `server.js` — Passenger entry point (Option B).
-- `package.json`
-  - `engines.node` pins the Node version so hPanel provisions a compatible runtime.
-  - `prisma` CLI is in `dependencies` so it survives `npm install --production`.
-  - `start` runs `next start` (VPS / `npm start`); `start:passenger` runs `server.js`.
-- `.env` — never commit this; recreate it on the server or in the Node.js env vars panel.
-- `prisma/schema.prisma` — change `provider` to `mysql` if you use Hostinger MySQL.
+No rebuild, no PHP restart — Apache picks up new files on the next
+request.
 
 ## Common gotchas
 
-- **"Prisma Client not generated"** — run `npm install` again or
-  `npx prisma generate`.
-- **"Environment variable not found: DATABASE_URL"** — the app was started
-  without the env var set. Recheck hPanel env vars and restart.
-- **"Tables do not exist"** — you forgot `npx prisma db push` after deploy.
-- **Port issues on VPS** — make sure `next start` is bound to 127.0.0.1:3000
-  (the default) and Nginx proxies to it. Never expose port 3000 to the
-  internet directly.
-- **SQLite on shared hosting** — fine for low volume, but any file-system
-  reset on the hosting side wipes data. Prefer MySQL on shared hosting.
+- **"Configuration missing"** on page load → you haven't created `config.php`
+  yet. Copy `config.example.php` to `config.php` and edit it.
+- **"Database connection failed"** → username/password/db name wrong in
+  `config.php`. Double-check against hPanel → Databases.
+- **Install wizard says "Set app_secret"** → you left the placeholder
+  string in `config.php`. Replace it with a random 32+ char string.
+- **Can't reach `/admin/`** → make sure HTTPS is on; the admin session
+  cookie is `Secure` under HTTPS only.
+- **Status lookup always shows "No referrals found"** → the referrer
+  looked up with an email or phone that doesn't match what they typed on
+  the referral form. Ask them to try the other field.
+- **Anything weird** → hPanel → Advanced → **Error Logs** has your PHP
+  errors. That's usually enough to spot the issue.

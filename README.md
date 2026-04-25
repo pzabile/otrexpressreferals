@@ -1,20 +1,19 @@
 # OTR Express — Driver Referral Program
 
-A full-stack web app where drivers and fleet contacts can refer new CDL drivers
-to OTR Express, track every step of the hiring pipeline, and earn a payout
-when the referred driver completes 14 days on the road.
+A PHP + MySQL web app where drivers / fleet contacts can refer new CDL
+drivers to OTR Express, track every stage of the hiring pipeline, and earn
+a payout when the referred driver completes 14 days on the road.
 
-Built with Next.js 14 (App Router), Prisma, SQLite (swap to Postgres for
-production), and Tailwind CSS. Visual design is inspired by
-otrexpressgroup.com — dark industrial theme with orange accents, heavy
-display typography, and emphasis on trucking imagery.
+Built to run directly on Hostinger shared hosting — no build step, no
+Node.js, no frameworks. Just upload the files, point a MySQL database at
+it, and run the install wizard.
 
 ## Features
 
 - **Public landing page** explaining the program, payout rules, and pipeline.
-- **Refer a Driver** form capturing referrer + driver name, email, and phone.
-- **Referrer status page** — no account needed. Enter the email or phone used
-  on the referral to see every referral's timeline, admin notes, and
+- **Refer a Driver** form capturing referrer + driver (name, email, phone).
+- **Referrer status page** — no account needed. Enter the email or phone
+  used on the referral to see every referral's timeline, admin notes, and
   rejection reasons.
 - **Admin console** (protected by email + password):
   - Queue view with filters, search, and pipeline KPIs.
@@ -30,86 +29,55 @@ display typography, and emphasis on trucking imagery.
   Started Working → 14 Days Completed → Hired & Paid. Plus a terminal
   **Rejected** state.
 
-## Deploying to Hostinger
-
-See [HOSTINGER.md](./HOSTINGER.md) for step-by-step instructions covering
-both a Hostinger VPS and a Hostinger Premium/Business/Cloud plan with
-the Node.js app selector. (Basic PHP-only shared hosting cannot run this
-app.)
-
-## Local development
-
-```bash
-# 1. Install deps
-npm install
-
-# 2. Copy env template and edit values
-cp .env.example .env
-# Set ADMIN_EMAIL, ADMIN_PASSWORD, SESSION_SECRET (32+ chars)
-
-# 3. Create the SQLite database and tables
-npx prisma db push
-
-# 4. Run the dev server
-npm run dev
-```
-
-Then open:
-
-- `http://localhost:3000/` — public landing page
-- `http://localhost:3000/refer` — referral form
-- `http://localhost:3000/status` — referrer status lookup
-- `http://localhost:3000/admin` — admin console (redirects to login)
-
-The admin user is auto-provisioned on first login using `ADMIN_EMAIL` /
-`ADMIN_PASSWORD` from your `.env`.
-
-## Production notes
-
-- SQLite is fine for a single-instance deployment but has no multi-writer
-  story. For production, change `prisma/schema.prisma` provider to
-  `postgresql` and set `DATABASE_URL` to a managed Postgres (Neon, Supabase,
-  RDS, Railway, etc.), then run `npx prisma migrate deploy`.
-- Set `SESSION_SECRET` to a long random string. The admin session cookie is
-  HMAC-signed with this secret.
-- Set `NEXT_PUBLIC_SITE_URL` to your public URL for correct links.
-- `NEXT_PUBLIC_REFERRAL_BOUNTY` controls the payout amount shown on the
-  public site (purely display).
-
-### Deploying to Vercel
-
-1. Push the repo to GitHub.
-2. Import into Vercel.
-3. Add the environment variables from `.env.example`.
-4. Use a managed Postgres (not SQLite) and set `DATABASE_URL` accordingly.
-5. The build script runs `prisma generate && prisma migrate deploy && next build`.
-
 ## Project layout
 
 ```
-app/
-  layout.tsx                   # Site shell (nav + footer)
-  page.tsx                     # Public landing page
-  refer/                       # Referral submission + thanks
-  status/                      # Referrer status lookup
-  admin/                       # Admin auth, dashboard, detail
-components/                    # SiteNav, SiteFooter, StatusBadge, Timeline
-lib/
-  db.ts                        # Prisma client singleton
-  auth.ts                      # Admin auth (bcrypt + signed cookie)
-  statuses.ts                  # Status enum, labels, colors
-  format.ts                    # Date/phone formatting
-prisma/schema.prisma           # AdminUser, Referrer, Referral, Comment, StageUpdate
+/
+├── index.php                  # Landing page
+├── refer.php                  # Referral form
+├── refer-submit.php           # Form handler
+├── thanks.php                 # Confirmation
+├── status.php                 # Referrer status lookup
+├── install.php                # One-time setup wizard (delete after run)
+├── config.example.php         # Copy to config.php and edit
+├── .htaccess                  # Apache hardening rules
+├── admin/
+│   ├── index.php              # Dashboard
+│   ├── login.php
+│   ├── logout.php
+│   ├── referral.php           # Detail view: stage updates + comments
+│   └── actions.php            # Form action handler
+├── assets/style.css
+├── includes/
+│   ├── bootstrap.php          # Loads config, opens DB, starts session
+│   ├── db.php                 # PDO connection
+│   ├── auth.php               # Admin session helpers
+│   ├── statuses.php           # Status constants + labels
+│   ├── helpers.php            # CSRF, flash, formatting, escape
+│   ├── layout-public.php
+│   └── layout-admin.php
+└── sql/
+    └── schema.sql             # Run via phpMyAdmin, or install.php
 ```
 
-## Rules recap (matches the requirements)
+## Deploying to Hostinger
 
-- Drivers are referred via the public form with **name, email, and phone**.
-- All referrals land in the **admin queue**.
-- Admin can **add comments** (visible to referrer or internal-only) and
-  **move the referral through every stage**: contacted, waiting on documents,
-  waiting on insurance, orientation scheduled, started working, 14 days
-  completed.
-- Rejection **requires a reason** that the referrer sees.
-- Referrer **payout is triggered at 14 days** of the driver working. The
-  admin marks the referral paid when the payout has been issued.
+See [HOSTINGER.md](./HOSTINGER.md) for step-by-step instructions, including
+connecting your GitHub repo to Hostinger so updates deploy with
+`git push`.
+
+## Requirements
+
+- PHP 8.0 or newer (Hostinger default is PHP 8.x)
+- MySQL 5.7+ / MariaDB 10.3+
+- mod_rewrite not strictly required (all URLs keep their `.php` extension)
+
+## Security notes
+
+- Admin passwords are stored as `password_hash` / `password_verify` (bcrypt).
+- All admin forms use CSRF tokens bound to the session.
+- All database access uses prepared statements (PDO).
+- All user-supplied output is escaped via `htmlspecialchars`.
+- `config.php` and `includes/` are protected by `.htaccess`.
+- Session cookies are `HttpOnly`, `SameSite=Lax`, and `Secure` under HTTPS.
+- `install.php` should be deleted from the server after setup.
