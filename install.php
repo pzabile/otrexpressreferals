@@ -76,7 +76,7 @@ render_public_header($config, 'Install', '');
     <h2>Installation complete</h2>
     <p>Your admin account has been created.</p>
     <p><strong>Delete <code>install.php</code> from your server now.</strong> Leaving it in place is a security risk.</p>
-    <p><a class="btn-primary" href="/admin/login.php">Go to admin login</a></p>
+    <p><a class="btn-primary" href="/admin/login">Go to admin login</a></p>
   </div>
 <?php else: ?>
   <div class="card">

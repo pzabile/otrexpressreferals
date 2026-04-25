@@ -2,6 +2,22 @@
 Options -Indexes
 DirectoryIndex index.php
 
+RewriteEngine On
+
+# 1) Redirect /foo.php → /foo for direct GET requests so links and history
+#    canonicalize to the extension-less URL. Skips POST so form actions
+#    posting to *.php (legacy) still work without losing data.
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteCond %{THE_REQUEST} \s/+([^?\s]+?)\.php([?\s]) [NC]
+RewriteRule ^ /%1 [R=301,L,NE]
+
+# 2) Internal rewrite: if /foo doesn't exist as a file or directory but
+#    /foo.php does, serve it. Method is preserved (POST stays POST).
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
+
 # Block direct access to the config files. PHP wouldn't render them
 # anyway, but this blocks curl access too.
 <Files "config.php">

@@ -70,7 +70,7 @@ render_admin_header($config, $admin, 'Referrals');
     <div class="stat-card"><p>New</p><strong><?= $get('SUBMITTED') ?></strong></div>
     <div class="stat-card"><p>In Progress</p><strong><?= $inProgress ?></strong></div>
     <div class="stat-card accent"><p>Payout Ready</p><strong><?= $get('TWO_WEEKS_COMPLETED') ?></strong></div>
-    <div class="stat-card"><p>Hired</p><strong><?= $get('HIRED_PAID') ?></strong></div>
+    <div class="stat-card"><p>Paid</p><strong><?= $get('HIRED_PAID') ?></strong></div>
   </div>
 
   <div class="card no-pad">
@@ -93,18 +93,22 @@ render_admin_header($config, $admin, 'Referrals');
           <tr>
             <td>
               <p class="strong"><?= e((string)$r['driver_name']) ?></p>
-              <p class="hint"><?= e((string)$r['driver_email']) ?></p>
+              <?php if (!empty($r['driver_email'])): ?>
+                <p class="hint"><?= e((string)$r['driver_email']) ?></p>
+              <?php endif; ?>
               <p class="hint"><?= e(phone_pretty((string)$r['driver_phone'])) ?></p>
             </td>
             <td>
               <p><?= e((string)$r['referrer_name']) ?></p>
-              <p class="hint"><?= e((string)$r['referrer_email']) ?></p>
+              <?php if (!empty($r['referrer_email'])): ?>
+                <p class="hint"><?= e((string)$r['referrer_email']) ?></p>
+              <?php endif; ?>
               <p class="hint"><?= e(phone_pretty((string)$r['referrer_phone'])) ?></p>
             </td>
             <td><?= status_badge((string)$r['status']) ?></td>
             <td class="hint"><?= e(fmt_short_date((string)$r['created_at'])) ?></td>
             <td class="hint"><?= (int)$r['comment_count'] ?> note<?= (int)$r['comment_count'] === 1 ? '' : 's' ?></td>
-            <td class="right"><a class="btn-ghost sm" href="/admin/referral.php?id=<?= (int)$r['id'] ?>">Open</a></td>
+            <td class="right"><a class="btn-ghost sm" href="/admin/referral?id=<?= (int)$r['id'] ?>">Open</a></td>
           </tr>
         <?php endforeach; ?>
       </tbody>

@@ -91,14 +91,26 @@ function admin_render_timeline(array $updates, string $currentStatus): void
       <h2>Driver</h2>
       <dl class="kv">
         <div><dt>Name</dt><dd><?= e((string)$r['driver_name']) ?></dd></div>
-        <div><dt>Email</dt><dd><a href="mailto:<?= e((string)$r['driver_email']) ?>"><?= e((string)$r['driver_email']) ?></a></dd></div>
+        <div><dt>Email</dt><dd>
+          <?php if (!empty($r['driver_email'])): ?>
+            <a href="mailto:<?= e((string)$r['driver_email']) ?>"><?= e((string)$r['driver_email']) ?></a>
+          <?php else: ?>
+            <span class="muted">Not provided</span>
+          <?php endif; ?>
+        </dd></div>
         <div><dt>Phone</dt><dd><a href="tel:<?= e(phone_digits((string)$r['driver_phone'])) ?>"><?= e(phone_pretty((string)$r['driver_phone'])) ?></a></dd></div>
       </dl>
       <hr class="hr">
       <h2>Referrer</h2>
       <dl class="kv">
         <div><dt>Name</dt><dd><?= e((string)$r['referrer_name']) ?></dd></div>
-        <div><dt>Email</dt><dd><a href="mailto:<?= e((string)$r['referrer_email']) ?>"><?= e((string)$r['referrer_email']) ?></a></dd></div>
+        <div><dt>Email</dt><dd>
+          <?php if (!empty($r['referrer_email'])): ?>
+            <a href="mailto:<?= e((string)$r['referrer_email']) ?>"><?= e((string)$r['referrer_email']) ?></a>
+          <?php else: ?>
+            <span class="muted">Not provided</span>
+          <?php endif; ?>
+        </dd></div>
         <div><dt>Phone</dt><dd><a href="tel:<?= e(phone_digits((string)$r['referrer_phone'])) ?>"><?= e(phone_pretty((string)$r['referrer_phone'])) ?></a></dd></div>
       </dl>
       <hr class="hr">
@@ -109,7 +121,7 @@ function admin_render_timeline(array $updates, string $currentStatus): void
         <div><dt>Paid</dt><dd><?= !empty($r['paid_at']) ? e(fmt_short_date((string)$r['paid_at'])) : 'Pending' ?></dd></div>
       </dl>
       <?php if ($r['status'] === 'TWO_WEEKS_COMPLETED' && empty($r['paid_at'])): ?>
-        <form method="post" action="/admin/actions.php" class="mt">
+        <form method="post" action="/admin/actions" class="mt">
           <?= csrf_field($config) ?>
           <input type="hidden" name="action" value="mark_paid">
           <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
@@ -125,7 +137,7 @@ function admin_render_timeline(array $updates, string $currentStatus): void
           Moving to <strong class="accent">Started Working</strong> starts the 14-day clock automatically.
           Moving to <strong class="accent">Rejected</strong> requires a reason that the referrer will see.
         </p>
-        <form method="post" action="/admin/actions.php" class="form-stack">
+        <form method="post" action="/admin/actions" class="form-stack">
           <?= csrf_field($config) ?>
           <input type="hidden" name="action" value="update_status">
           <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
@@ -138,15 +150,16 @@ function admin_render_timeline(array $updates, string $currentStatus): void
             </select>
           </label>
           <label class="field">
-            <span class="field-label">Internal note (optional)</span>
+            <span class="field-label">Internal note (admin-only — not shown to referrer)</span>
             <input name="note" class="field-input" placeholder="e.g. Sent application packet via email">
           </label>
           <label class="field">
-            <span class="field-label">Rejection reason (required if rejecting)</span>
-            <textarea name="rejection_reason" class="field-input field-textarea" placeholder="Tell the referrer why this driver was rejected. This shows on their status page."><?= e((string)($r['rejection_reason'] ?? '')) ?></textarea>
+            <span class="field-label">Reason shown to referrer (required if Not Selected)</span>
+            <textarea name="rejection_reason" class="field-input field-textarea" placeholder="Use a generic reason. Do NOT include MVR specifics, drug-test results, medical info, or background-check details — this text is shown to the referrer."><?= e((string)($r['rejection_reason'] ?? '')) ?></textarea>
+            <span class="hint" style="margin-top:0.4rem">Safe examples: &ldquo;Did not pass our screening criteria&rdquo;, &ldquo;Driver withdrew from the process&rdquo;, &ldquo;Did not start orientation&rdquo;.</span>
           </label>
           <div class="form-actions between">
-            <p class="hint">This creates a timeline entry visible to the referrer.</p>
+            <p class="hint">Saves a timeline entry. The stage label is visible to the referrer; your internal note is not.</p>
             <button class="btn-primary" type="submit">Save Update</button>
           </div>
         </form>
@@ -165,7 +178,13 @@ function admin_render_timeline(array $updates, string $currentStatus): void
 
       <section class="card">
         <h2>Comments</h2>
-        <form method="post" action="/admin/actions.php" class="form-stack">
+        <p class="hint">
+          <strong>Privacy:</strong> Anything you mark &ldquo;Visible to the referrer&rdquo;
+          is shown on their status page. Never paste MVR records, drug-test
+          results, medical info, background-check findings, or other
+          sensitive driver data into a visible comment — keep those internal.
+        </p>
+        <form method="post" action="/admin/actions" class="form-stack">
           <?= csrf_field($config) ?>
           <input type="hidden" name="action" value="add_comment">
           <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
@@ -174,8 +193,8 @@ function admin_render_timeline(array $updates, string $currentStatus): void
             <textarea name="body" class="field-input field-textarea" required placeholder="Update the referrer, leave an internal note, anything."></textarea>
           </label>
           <label class="checkbox">
-            <input type="checkbox" name="visible_to_referrer" checked>
-            <span>Visible to the referrer</span>
+            <input type="checkbox" name="visible_to_referrer">
+            <span>Visible to the referrer (default is internal-only)</span>
           </label>
           <div class="form-actions right">
             <button class="btn-primary" type="submit">Post Comment</button>

@@ -40,6 +40,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
         <li><a href="#disqualification">Disqualification &amp; No Guarantee of Hire</a></li>
         <li><a href="#consent">Driver Consent &amp; TCPA</a></li>
         <li><a href="#communications">How We Will Contact You and the Driver</a></li>
+        <li><a href="#disclosure">What We Share With the Referrer</a></li>
         <li><a href="#privacy">Privacy &amp; Data Use</a></li>
         <li><a href="#intellectual">Intellectual Property</a></li>
         <li><a href="#warranties">Disclaimers &amp; Limitation of Liability</a></li>
@@ -80,11 +81,11 @@ render_public_header($config, 'Terms & Conditions', 'terms');
 
     <h2 id="program-rules">4. Referral Program Rules</h2>
     <ol>
-      <li>You submit the Referred Driver's full legal name, email address, and best phone number through the Site, along with your own contact information.</li>
+      <li>You submit the Referred Driver's full legal name and best phone number through the Site, along with your own contact information. Email is optional for both you and the Referred Driver.</li>
       <li>You confirm at submission that the Referred Driver has agreed to be contacted by the Company about a job opportunity (see Section 7).</li>
-      <li>The Company reviews the referral and updates its status in the pipeline (Submitted, Contacted, Application Sent, Waiting on Documents, Waiting on Insurance, Orientation Scheduled, Started Working, 14 Days Completed, Hired &amp; Paid, or Rejected).</li>
-      <li>You can check the live status of every referral you submit at <code>/status.php</code> using the email or phone you used to submit.</li>
-      <li>If the referral is Rejected, the reason is shown on your status page.</li>
+      <li>The Company reviews the referral and updates its status in the pipeline (Submitted, Contacted, Application Sent, Waiting on Documents, Waiting on Insurance, Orientation Scheduled, Started Working, 14 Days Completed, Paid, or Not Selected).</li>
+      <li>You can check the live status of every referral you submit at <code>/status</code> using the email or phone you used to submit.</li>
+      <li>If the referral is Not Selected, a generic reason (no protected information) is shown on your status page.</li>
       <li>Only the first Referrer to submit a particular Referred Driver is credited. Duplicate or subsequent referrals of the same driver do not qualify, regardless of who submits them.</li>
       <li>The Company has sole discretion over whether to hire a Referred Driver. Submitting a referral does not create any obligation to hire.</li>
     </ol>
@@ -147,7 +148,63 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       <li>Standard message and data rates from your wireless carrier may apply.</li>
     </ul>
 
-    <h2 id="privacy">9. Privacy &amp; Data Use</h2>
+    <h2 id="disclosure">9. What We Share With the Referrer</h2>
+    <p>
+      Because the Referrer asked us to consider a specific Referred Driver
+      and the Payout depends on whether that Driver is hired and stays on
+      the road, we share <strong>limited, high-level status</strong> with
+      the Referrer through the Site. Specifically, the Referrer can see:
+    </p>
+    <ul>
+      <li>The driver's name (which the Referrer themselves provided);</li>
+      <li>The current pipeline stage label (e.g. "Driver Contacted",
+        "Application Sent", "Waiting on Documents", "Started Working");</li>
+      <li>The date the stage changed;</li>
+      <li>A general "not selected" notice if the Referred Driver is not hired
+        (worded generically — no specific reasons revealed); and</li>
+      <li>Notes the Company explicitly chooses to share with the Referrer.</li>
+    </ul>
+    <p>
+      The following information is <strong>never shown</strong> to the
+      Referrer through the Site:
+    </p>
+    <ul>
+      <li>Motor Vehicle Records (MVR), accident history, or specific
+        violations;</li>
+      <li>Drug-test or alcohol-test results, including pass/fail status;</li>
+      <li>DOT physical results, medical conditions, or any health-related
+        information;</li>
+      <li>Background-check findings, criminal-history information, or any
+        information regulated by the Fair Credit Reporting Act (15 U.S.C.
+        § 1681 et seq.);</li>
+      <li>Specific reasons for non-hire that fall under the categories
+        above;</li>
+      <li>Internal notes between Company staff;</li>
+      <li>The Referred Driver's wages, settlements, or compensation;</li>
+      <li>Documents the Referred Driver submits to the Company.</li>
+    </ul>
+    <p>
+      <strong>Notice to the Referred Driver.</strong> At first contact the
+      Company will tell the Referred Driver that they were referred, by
+      whom, and that high-level pipeline status (as described above) will
+      be shared with the Referrer for the limited purpose of administering
+      this referral. If the Referred Driver objects to this sharing, the
+      Company will (a) stop sharing further status with the Referrer and
+      (b) at the Referred Driver's request, suppress past status from the
+      Referrer's view going forward. Continuing the application after this
+      notice means the Referred Driver agrees to the limited disclosure.
+    </p>
+    <p>
+      The Company applies these limits because pre-employment screening
+      data is regulated under the Fair Credit Reporting Act, the Americans
+      with Disabilities Act, the Federal Motor Carrier Safety Administration
+      regulations (49 C.F.R. Parts 382, 391), and various state employment-
+      privacy laws. Disclosing screening results to a third-party Referrer
+      without the Referred Driver's authorization could violate one or more
+      of those laws.
+    </p>
+
+    <h2 id="privacy">10. Privacy &amp; Data Use</h2>
     <ul>
       <li>The Company collects the names, emails, and phone numbers you submit, along with technical metadata (IP address and User-Agent string) to maintain a record of consent.</li>
       <li>The Company uses this information solely to operate the Program: to contact the Referred Driver about a job, update you on referral status, and pay any earned Payout.</li>
@@ -156,7 +213,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       <li>You and the Referred Driver may request deletion of personal data by emailing <a href="mailto:<?= e($email) ?>"><?= e($email) ?></a>, subject to the Company's record-retention obligations.</li>
     </ul>
 
-    <h2 id="intellectual">10. Intellectual Property</h2>
+    <h2 id="intellectual">11. Intellectual Property</h2>
     <p>
       All content on the Site, including the Company's logo, trade names,
       trademarks, and the design of the Site, is owned by the Company and may
@@ -164,7 +221,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       grants you any license to the Company's intellectual property.
     </p>
 
-    <h2 id="warranties">11. Disclaimers &amp; Limitation of Liability</h2>
+    <h2 id="warranties">12. Disclaimers &amp; Limitation of Liability</h2>
     <p>
       The Site and the Program are provided "as is" without warranty of any
       kind, express or implied, including any warranty of merchantability,
@@ -183,7 +240,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       greater.
     </p>
 
-    <h2 id="indemnity">12. Indemnification</h2>
+    <h2 id="indemnity">13. Indemnification</h2>
     <p>
       You agree to indemnify, defend, and hold harmless the Company and its
       officers, directors, employees, and agents from and against any and all
@@ -194,7 +251,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       violation of any applicable law.
     </p>
 
-    <h2 id="changes">13. Changes to the Program</h2>
+    <h2 id="changes">14. Changes to the Program</h2>
     <p>
       The Company may modify, suspend, or discontinue the Program or these
       Terms at any time, with or without notice. Continued use of the Site
@@ -203,14 +260,14 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       Company's reasonable discretion.
     </p>
 
-    <h2 id="termination">14. Termination</h2>
+    <h2 id="termination">15. Termination</h2>
     <p>
       The Company may suspend or terminate your participation in the Program
       at any time for any reason, including suspected fraud, abuse, or
       violation of these Terms. Termination forfeits any pending Payouts.
     </p>
 
-    <h2 id="disputes">15. Governing Law &amp; Disputes</h2>
+    <h2 id="disputes">16. Governing Law &amp; Disputes</h2>
     <p>
       These Terms are governed by the laws of the State of <?= e($state) ?>,
       without regard to conflict-of-law principles. Any dispute arising out
@@ -224,7 +281,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       Terms, to the maximum extent permitted by law.
     </p>
 
-    <h2 id="contact">16. Contact</h2>
+    <h2 id="contact">17. Contact</h2>
     <p>
       Questions about these Terms or the Program can be sent to
       <a href="mailto:<?= e($email) ?>"><?= e($email) ?></a> or by mail to

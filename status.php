@@ -18,7 +18,6 @@ if ($hasQuery) {
         $referrer = $s->fetch() ?: null;
     }
     if ($referrer === null && $phoneDigits !== '') {
-        // MySQL doesn't have a regex replace in older versions. Do it in PHP.
         $all = $db->query('SELECT * FROM referrers')->fetchAll();
         foreach ($all as $r) {
             if (phone_digits((string)$r['phone']) === $phoneDigits) {
@@ -66,6 +65,9 @@ render_public_header($config, 'Check Referral Status', 'status');
 
 /**
  * Render a vertical timeline of stages for a referral.
+ * Internal stage notes are intentionally NOT shown to the referrer to keep
+ * sensitive driver info (documents, medical, MVR, etc.) confidential.
+ * Only the stage label and date are displayed.
  */
 function render_timeline(array $updates, string $currentStatus): void
 {
@@ -90,9 +92,7 @@ function render_timeline(array $updates, string $currentStatus): void
         echo '<div>';
         echo '<span class="' . e($textClass) . '">' . e(status_label($step)) . '</span>';
         if ($update) {
-            echo '<span class="timeline-meta">' . e(fmt_date((string)$update['created_at']));
-            if (!empty($update['note'])) echo ' — ' . e((string)$update['note']);
-            echo '</span>';
+            echo '<span class="timeline-meta">' . e(fmt_date((string)$update['created_at'])) . '</span>';
         }
         echo '</div>';
         echo '</li>';
@@ -109,8 +109,8 @@ function render_timeline(array $updates, string $currentStatus): void
     <h1>Track Your Referrals</h1>
     <p class="lead">
       Enter the email or phone number you used when you referred the driver.
-      All your referrals will show up with a full timeline and any admin
-      notes.
+      All your referrals will show up with a high-level timeline and any
+      admin notes shared with you.
     </p>
   </div>
 
@@ -129,11 +129,11 @@ function render_timeline(array $updates, string $currentStatus): void
   <?php if ($hasQuery && $referrer === null): ?>
     <div class="alert alert-error">
       No referrals found for that email or phone. Double-check what you entered, or
-      <a href="/refer.php">submit a new referral</a>.
+      <a href="/refer">submit a new referral</a>.
     </div>
   <?php elseif ($referrer !== null && empty($referrals)): ?>
     <div class="alert">We found your account but no active referrals yet.
-      <a href="/refer.php">Refer a driver →</a></div>
+      <a href="/refer">Refer a driver →</a></div>
   <?php elseif (!empty($referrals)): ?>
     <div class="stack">
     <?php foreach ($referrals as $r): ?>
@@ -142,7 +142,6 @@ function render_timeline(array $updates, string $currentStatus): void
           <div>
             <p class="hint">Referral submitted <?= e(fmt_short_date((string)$r['created_at'])) ?></p>
             <h2><?= e((string)$r['driver_name']) ?></h2>
-            <p class="hint"><?= e((string)$r['driver_email']) ?> &middot; <?= e(phone_pretty((string)$r['driver_phone'])) ?></p>
           </div>
           <div class="ref-head-right">
             <?= status_badge((string)$r['status']) ?>
@@ -152,7 +151,7 @@ function render_timeline(array $updates, string $currentStatus): void
 
         <?php if ($r['status'] === 'REJECTED' && !empty($r['rejection_reason'])): ?>
           <div class="alert alert-reject">
-            <p class="alert-title">Reason for rejection</p>
+            <p class="alert-title">Reason this referral was not selected</p>
             <p><?= nl2br(e((string)$r['rejection_reason'])) ?></p>
           </div>
         <?php endif; ?>
@@ -171,14 +170,14 @@ function render_timeline(array $updates, string $currentStatus): void
             <?php render_timeline($r['stage_updates'], (string)$r['status']); ?>
           </div>
           <div>
-            <p class="eyebrow">Admin Notes</p>
+            <p class="eyebrow">Updates From Us</p>
             <?php if (empty($r['comments'])): ?>
-              <p class="hint">No notes yet. Check back after the admin reviews your referral.</p>
+              <p class="hint">No updates posted yet. Check back after the admin reviews your referral.</p>
             <?php else: ?>
               <ul class="comments">
                 <?php foreach ($r['comments'] as $c): ?>
                   <li>
-                    <p class="hint"><?= $c['author'] === 'SYSTEM' ? 'System' : 'Admin' ?> &middot; <?= e(fmt_date((string)$c['created_at'])) ?></p>
+                    <p class="hint">OTR Express Group &middot; <?= e(fmt_date((string)$c['created_at'])) ?></p>
                     <p><?= nl2br(e((string)$c['body'])) ?></p>
                   </li>
                 <?php endforeach; ?>

@@ -13,11 +13,11 @@ CREATE TABLE IF NOT EXISTS admin_users (
 CREATE TABLE IF NOT EXISTS referrers (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
-  email VARCHAR(190) NOT NULL,
+  email VARCHAR(190) NULL,
   phone VARCHAR(30) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_referrer_email (email),
+  KEY idx_referrer_email (email),
   KEY idx_referrer_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS referrals (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   referrer_id INT UNSIGNED NOT NULL,
   driver_name VARCHAR(255) NOT NULL,
-  driver_email VARCHAR(190) NOT NULL,
+  driver_email VARCHAR(190) NULL,
   driver_phone VARCHAR(30) NOT NULL,
   status VARCHAR(40) NOT NULL DEFAULT 'SUBMITTED',
   rejection_reason TEXT NULL,

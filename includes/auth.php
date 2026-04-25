@@ -56,7 +56,7 @@ function require_admin(PDO $db): array
 {
     $admin = admin_current($db);
     if ($admin === null) {
-        redirect('/admin/login.php');
+        redirect('/admin/login');
     }
     return $admin;
 }

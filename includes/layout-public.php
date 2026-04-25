@@ -18,6 +18,8 @@ function render_public_header(array $config, string $title, string $active = '')
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $pageTitle ?></title>
 <meta name="description" content="Refer a CDL driver to OTR Express Group. Track every step from referral to hire and get paid when your driver completes 14 days.">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="alternate icon" href="/assets/favicon.svg">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body class="site">
@@ -31,10 +33,10 @@ function render_public_header(array $config, string $title, string $active = '')
     </a>
     <nav class="nav-links" aria-label="Primary">
       <a href="/"<?= $isActive('home') ?>>Home</a>
-      <a href="/refer.php"<?= $isActive('refer') ?>>Refer a Driver</a>
-      <a href="/status.php"<?= $isActive('status') ?>>Check Status</a>
-      <a href="/terms.php"<?= $isActive('terms') ?>>Terms</a>
-      <a class="nav-cta" href="/refer.php">Refer Now</a>
+      <a href="/refer"<?= $isActive('refer') ?>>Refer a Driver</a>
+      <a href="/status"<?= $isActive('status') ?>>Check Status</a>
+      <a href="/terms"<?= $isActive('terms') ?>>Terms</a>
+      <a class="nav-cta" href="/refer">Refer Now</a>
     </nav>
     <details class="nav-mobile">
       <summary aria-label="Open menu">
@@ -46,9 +48,9 @@ function render_public_header(array $config, string $title, string $active = '')
       </summary>
       <div class="nav-mobile-menu">
         <a href="/">Home</a>
-        <a href="/refer.php">Refer a Driver</a>
-        <a href="/status.php">Check Status</a>
-        <a href="/terms.php">Terms</a>
+        <a href="/refer">Refer a Driver</a>
+        <a href="/status">Check Status</a>
+        <a href="/terms">Terms</a>
       </div>
     </details>
   </div>
@@ -75,9 +77,9 @@ function render_public_footer(array $config): void
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Program</h4>
-          <a href="/refer.php">Refer a Driver</a>
-          <a href="/status.php">Check Status</a>
-          <a href="/terms.php">Terms &amp; Conditions</a>
+          <a href="/refer">Refer a Driver</a>
+          <a href="/status">Check Status</a>
+          <a href="/terms">Terms &amp; Conditions</a>
         </div>
         <div class="footer-col">
           <h4>Company</h4>

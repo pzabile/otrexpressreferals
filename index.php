@@ -18,8 +18,8 @@ render_public_header($config, '', 'home');
         per driver who completes 14 days on the road with OTR Express Group.
       </p>
       <div class="cta-row">
-        <a class="btn-primary" href="/refer.php">Refer a Driver</a>
-        <a class="btn-ghost" href="/status.php">Check Referral Status</a>
+        <a class="btn-primary" href="/refer">Refer a Driver</a>
+        <a class="btn-ghost" href="/status">Check Referral Status</a>
       </div>
     </div>
     <div class="card card-brand">
@@ -45,7 +45,7 @@ render_public_header($config, '', 'home');
           notes in real time.
         </p>
       </div>
-      <a class="btn-ghost" href="/status.php">Open Status Tracker</a>
+      <a class="btn-ghost" href="/status">Open Status Tracker</a>
     </div>
     <div class="grid-3">
       <?php foreach (OTR_STATUS_ORDER as $s): if ($s === 'REJECTED') continue; ?>
@@ -72,7 +72,7 @@ render_public_header($config, '', 'home');
         <li>Payout is released once the admin confirms and marks the referral paid.</li>
       </ul>
       <p class="hint" style="margin-top: 1rem;">
-        Full program rules are in our <a href="/terms.php">Terms &amp; Conditions</a>.
+        Full program rules are in our <a href="/terms">Terms &amp; Conditions</a>.
       </p>
     </div>
     <div class="card card-brand">
@@ -80,8 +80,8 @@ render_public_header($config, '', 'home');
       <h3>Send Us Your Next Driver</h3>
       <p>It takes less than a minute. You'll get a confirmation and a status link you can check anytime with your email or phone.</p>
       <div class="cta-row">
-        <a class="btn-primary" style="background:#fff; color: var(--navy);" href="/refer.php">Start a Referral</a>
-        <a class="btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.4);" href="/status.php">I already referred someone</a>
+        <a class="btn-primary" style="background:#fff; color: var(--navy);" href="/refer">Start a Referral</a>
+        <a class="btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.4);" href="/status">I already referred someone</a>
       </div>
     </div>
   </div>

@@ -4,7 +4,7 @@ require __DIR__ . '/includes/bootstrap.php';
 require __DIR__ . '/includes/telegram.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('/refer.php');
+    redirect('/refer');
 }
 
 if (!csrf_check($config, (string)($_POST['_csrf'] ?? ''))) {
@@ -14,10 +14,12 @@ if (!csrf_check($config, (string)($_POST['_csrf'] ?? ''))) {
 }
 
 $referrerName  = trim((string)($_POST['referrer_name'] ?? ''));
-$referrerEmail = clean_email($_POST['referrer_email'] ?? '');
+$referrerEmailRaw = trim((string)($_POST['referrer_email'] ?? ''));
+$referrerEmail = $referrerEmailRaw === '' ? null : clean_email($referrerEmailRaw);
 $referrerPhone = trim((string)($_POST['referrer_phone'] ?? ''));
 $driverName    = trim((string)($_POST['driver_name'] ?? ''));
-$driverEmail   = clean_email($_POST['driver_email'] ?? '');
+$driverEmailRaw = trim((string)($_POST['driver_email'] ?? ''));
+$driverEmail   = $driverEmailRaw === '' ? null : clean_email($driverEmailRaw);
 $driverPhone   = trim((string)($_POST['driver_phone'] ?? ''));
 $notes         = trim((string)($_POST['notes'] ?? ''));
 $consentDriver = !empty($_POST['consent_driver']);
@@ -26,11 +28,15 @@ $consentSelf   = !empty($_POST['consent_self']);
 
 $errors = [];
 if ($referrerName === '')  $errors[] = 'Your name is required.';
-if ($referrerEmail === null) $errors[] = 'Your email is required and must be valid.';
 if (strlen(phone_digits($referrerPhone)) < 7) $errors[] = 'Your phone is required.';
+if ($referrerEmailRaw !== '' && $referrerEmail === null) {
+    $errors[] = 'If you enter your email it must be a valid address (or leave it blank).';
+}
 if ($driverName === '')    $errors[] = 'Driver name is required.';
-if ($driverEmail === null) $errors[] = 'Driver email is required and must be valid.';
 if (strlen(phone_digits($driverPhone)) < 7) $errors[] = 'Driver phone is required.';
+if ($driverEmailRaw !== '' && $driverEmail === null) {
+    $errors[] = 'If you enter the driver email it must be a valid address (or leave it blank).';
+}
 if (strlen($notes) > 1000) $errors[] = 'Notes are limited to 1000 characters.';
 if (!$consentDriver) $errors[] = 'You must confirm the driver has agreed to be contacted.';
 if (!$consentTerms)  $errors[] = 'You must agree to the Terms & Conditions.';
@@ -39,10 +45,10 @@ if (!$consentSelf)   $errors[] = 'You must consent to be contacted about this re
 if (!empty($errors)) {
     $_SESSION['_old_refer'] = [
         'referrer_name'  => $referrerName,
-        'referrer_email' => (string)$referrerEmail,
+        'referrer_email' => $referrerEmailRaw,
         'referrer_phone' => $referrerPhone,
         'driver_name'    => $driverName,
-        'driver_email'   => (string)$driverEmail,
+        'driver_email'   => $driverEmailRaw,
         'driver_phone'   => $driverPhone,
         'notes'          => $notes,
         'consent_driver' => $consentDriver,
@@ -50,20 +56,38 @@ if (!empty($errors)) {
         'consent_self'   => $consentSelf,
     ];
     $_SESSION['_errors_refer'] = $errors;
-    redirect('/refer.php');
+    redirect('/refer');
 }
+
+$referrerPhoneDigits = phone_digits($referrerPhone);
 
 try {
     $db->beginTransaction();
 
-    // Upsert referrer by email.
-    $stmt = $db->prepare('SELECT id FROM referrers WHERE email = ? LIMIT 1');
-    $stmt->execute([$referrerEmail]);
-    $row = $stmt->fetch();
-    if ($row) {
-        $referrerId = (int)$row['id'];
-        $upd = $db->prepare('UPDATE referrers SET name = ?, phone = ? WHERE id = ?');
-        $upd->execute([$referrerName, $referrerPhone, $referrerId]);
+    // Find an existing referrer:
+    //  1. If email was provided, prefer email match.
+    //  2. Otherwise, fall back to phone-digits match.
+    $referrer = null;
+    if ($referrerEmail !== null) {
+        $stmt = $db->prepare('SELECT * FROM referrers WHERE email = ? LIMIT 1');
+        $stmt->execute([$referrerEmail]);
+        $referrer = $stmt->fetch() ?: null;
+    }
+    if ($referrer === null && $referrerPhoneDigits !== '') {
+        // Phone is stored with formatting, so do digits-only comparison in PHP.
+        $all = $db->query('SELECT * FROM referrers')->fetchAll();
+        foreach ($all as $row) {
+            if (phone_digits((string)$row['phone']) === $referrerPhoneDigits) {
+                $referrer = $row;
+                break;
+            }
+        }
+    }
+
+    if ($referrer !== null) {
+        $referrerId = (int)$referrer['id'];
+        $upd = $db->prepare('UPDATE referrers SET name = ?, phone = ?, email = COALESCE(?, email) WHERE id = ?');
+        $upd->execute([$referrerName, $referrerPhone, $referrerEmail, $referrerId]);
     } else {
         $ins = $db->prepare('INSERT INTO referrers (name, email, phone) VALUES (?, ?, ?)');
         $ins->execute([$referrerName, $referrerEmail, $referrerPhone]);
@@ -113,13 +137,13 @@ try {
 try {
     $referrer = [
         'name'  => $referrerName,
-        'email' => (string)$referrerEmail,
+        'email' => $referrerEmail ?? '(not provided)',
         'phone' => $referrerPhone,
     ];
     $referral = [
         'id'           => $referralId,
         'driver_name'  => $driverName,
-        'driver_email' => (string)$driverEmail,
+        'driver_email' => $driverEmail ?? '(not provided)',
         'driver_phone' => $driverPhone,
     ];
     $msg = telegram_format_new_referral($config, $referrer, $referral, $notes !== '' ? $notes : null);
@@ -128,4 +152,4 @@ try {
     // Swallow — Telegram failures must not surface to the user.
 }
 
-redirect('/thanks.php?id=' . $referralId);
+redirect('/thanks?id=' . $referralId);

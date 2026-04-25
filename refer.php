@@ -27,12 +27,12 @@ render_public_header($config, 'Refer a Driver', 'refer');
     </div>
   <?php endif; ?>
 
-  <form method="post" action="/refer-submit.php" class="form-stack">
+  <form method="post" action="/refer-submit" class="form-stack">
     <?= csrf_field($config) ?>
 
     <div class="card">
       <h2>Your Info (Referrer)</h2>
-      <p class="hint">We need this so we can pay you and send you status updates.</p>
+      <p class="hint">We need this so we can pay you and send you status updates. Phone is required; email is optional but lets us reach you with payment details.</p>
       <div class="form-grid">
         <label class="field">
           <span class="field-label">Your full name *</span>
@@ -43,15 +43,15 @@ render_public_header($config, 'Refer a Driver', 'refer');
           <input class="field-input" name="referrer_phone" type="tel" required value="<?= e($old['referrer_phone'] ?? '') ?>">
         </label>
         <label class="field field-wide">
-          <span class="field-label">Your email *</span>
-          <input class="field-input" name="referrer_email" type="email" required value="<?= e($old['referrer_email'] ?? '') ?>">
+          <span class="field-label">Your email (optional)</span>
+          <input class="field-input" name="referrer_email" type="email" value="<?= e($old['referrer_email'] ?? '') ?>">
         </label>
       </div>
     </div>
 
     <div class="card">
       <h2>Driver You're Referring</h2>
-      <p class="hint">Give us the driver's full legal name, email, and best phone number.</p>
+      <p class="hint">Give us the driver's full legal name and best phone number. Email is optional.</p>
       <div class="form-grid">
         <label class="field">
           <span class="field-label">Driver full name *</span>
@@ -62,8 +62,8 @@ render_public_header($config, 'Refer a Driver', 'refer');
           <input class="field-input" name="driver_phone" type="tel" required value="<?= e($old['driver_phone'] ?? '') ?>">
         </label>
         <label class="field field-wide">
-          <span class="field-label">Driver email *</span>
-          <input class="field-input" name="driver_email" type="email" required value="<?= e($old['driver_email'] ?? '') ?>">
+          <span class="field-label">Driver email (optional)</span>
+          <input class="field-input" name="driver_email" type="email" value="<?= e($old['driver_email'] ?? '') ?>">
         </label>
         <label class="field field-wide">
           <span class="field-label">Notes (optional)</span>
@@ -93,7 +93,7 @@ render_public_header($config, 'Refer a Driver', 'refer');
           <input type="checkbox" name="consent_terms" value="1" required <?= !empty($old['consent_terms']) ? 'checked' : '' ?>>
           <span>
             I have read and agree to the
-            <a href="/terms.php" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+            <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
             of the Driver Referral Program, including the payout rules and
             disqualification criteria.
           </span>
@@ -102,8 +102,8 @@ render_public_header($config, 'Refer a Driver', 'refer');
           <input type="checkbox" name="consent_self" value="1" required <?= !empty($old['consent_self']) ? 'checked' : '' ?>>
           <span>
             I consent to OTR Express Group contacting <strong>me</strong> at the
-            phone and email above to provide updates on this referral and to
-            arrange payment if it qualifies.
+            phone (and email, if provided) above to send updates on this referral
+            and to arrange payment if it qualifies.
           </span>
         </label>
       </div>

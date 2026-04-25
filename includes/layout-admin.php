@@ -11,6 +11,8 @@ function render_admin_header(array $config, ?array $admin, string $title): void
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($title) ?> — Admin — <?= $siteName ?></title>
 <meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="alternate icon" href="/assets/favicon.svg">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body class="site admin">
@@ -31,7 +33,7 @@ function render_admin_header(array $config, ?array $admin, string $title): void
       <?php endif; ?>
     </div>
     <?php if ($admin !== null): ?>
-      <form method="post" action="/admin/logout.php" class="admin-bar-right">
+      <form method="post" action="/admin/logout" class="admin-bar-right">
         <?= csrf_field($config) ?>
         <span class="admin-email"><?= e($admin['email']) ?></span>
         <button type="submit" class="btn-text">Sign Out</button>

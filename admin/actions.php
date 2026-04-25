@@ -40,7 +40,7 @@ switch ($action) {
         }
         if ($status === 'REJECTED' && $rejectionReason === '') {
             flash_set('error', 'A rejection reason is required when marking a referral as Rejected.');
-            redirect('/admin/referral.php?id=' . $referralId);
+            redirect('/admin/referral?id=' . $referralId);
         }
 
         $updates = ['status = ?'];
@@ -83,7 +83,7 @@ switch ($action) {
         $visible = isset($_POST['visible_to_referrer']) ? 1 : 0;
         if ($body === '') {
             flash_set('error', 'Comment cannot be empty.');
-            redirect('/admin/referral.php?id=' . $referralId);
+            redirect('/admin/referral?id=' . $referralId);
         }
         $db->prepare('INSERT INTO comments (referral_id, author, body, visible_to_referrer)
             VALUES (?, "ADMIN", ?, ?)')
@@ -104,4 +104,4 @@ switch ($action) {
         exit('Unknown action.');
 }
 
-redirect('/admin/referral.php?id=' . $referralId);
+redirect('/admin/referral?id=' . $referralId);
