@@ -15,9 +15,15 @@ function render_admin_header(array $config, ?array $admin, string $title): void
 </head>
 <body class="site admin">
 <header class="admin-bar">
-  <div class="wrap admin-bar-inner">
+  <div class="admin-bar-inner">
     <div class="admin-bar-left">
-      <span class="admin-chip">Admin Console</span>
+      <a class="brand" href="/admin/" style="text-decoration:none;">
+        <span class="brand-text">
+          <span class="brand-otr" style="color:#fff;">OTR EXPRESS</span>
+          <span class="brand-group" style="color:#93c5fd;">GROUP</span>
+        </span>
+      </a>
+      <span class="admin-chip">Admin</span>
       <?php if ($admin !== null): ?>
         <nav class="admin-nav">
           <a href="/admin/">Referrals</a>

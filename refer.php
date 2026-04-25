@@ -3,7 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 require __DIR__ . '/includes/layout-public.php';
 
-$bounty = (int)($config['referral_bounty'] ?? 500);
+$bounty = (int)($config['referral_bounty'] ?? 200);
 $old = $_SESSION['_old_refer'] ?? [];
 $errors = $_SESSION['_errors_refer'] ?? [];
 unset($_SESSION['_old_refer'], $_SESSION['_errors_refer']);
@@ -72,8 +72,48 @@ render_public_header($config, 'Refer a Driver', 'refer');
       </div>
     </div>
 
+    <div class="card">
+      <h2>Consent &amp; Authorization</h2>
+      <p class="hint">
+        Required by the TCPA and our Terms. The driver must have agreed to
+        be contacted before you submit their information.
+      </p>
+      <div class="consent-block">
+        <label class="checkbox">
+          <input type="checkbox" name="consent_driver" value="1" required <?= !empty($old['consent_driver']) ? 'checked' : '' ?>>
+          <span>
+            <strong>I have spoken with this driver</strong> and they have agreed
+            to be contacted by OTR Express Group (Benux Corp) by phone, text,
+            and email about a driving job opportunity. I understand OTR Express
+            Group will identify themselves and offer the driver an opt-out at
+            first contact.
+          </span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="consent_terms" value="1" required <?= !empty($old['consent_terms']) ? 'checked' : '' ?>>
+          <span>
+            I have read and agree to the
+            <a href="/terms.php" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+            of the Driver Referral Program, including the payout rules and
+            disqualification criteria.
+          </span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="consent_self" value="1" required <?= !empty($old['consent_self']) ? 'checked' : '' ?>>
+          <span>
+            I consent to OTR Express Group contacting <strong>me</strong> at the
+            phone and email above to provide updates on this referral and to
+            arrange payment if it qualifies.
+          </span>
+        </label>
+      </div>
+    </div>
+
     <div class="form-actions between">
-      <p class="hint">By submitting you confirm the driver has agreed to be contacted by OTR Express.</p>
+      <p class="hint">
+        Submitting this form does not guarantee the driver will be hired.
+        Payouts are made only after the driver completes 14 days of work.
+      </p>
       <button type="submit" class="btn-primary">Submit Referral</button>
     </div>
   </form>

@@ -21,13 +21,25 @@ return [
     'db_charset' => 'utf8mb4',
 
     // --- Site ---
-    'site_name'       => 'OTR Express Driver Referrals',
+    'site_name'       => 'OTR Express Group Driver Referrals',
     'site_url'        => 'https://referrals.otrexpressgroup.com',
-    'referral_bounty' => 500, // USD shown on the public site
+    'referral_bounty' => 200, // USD shown on the public site
 
     // --- Session ---
     // Name of the PHP session cookie for admin login.
     'session_name'    => 'otr_ref_sess',
     // HMAC secret for CSRF tokens. Any 32+ character random string.
     'app_secret'      => 'REPLACE-ME-WITH-A-LONG-RANDOM-STRING-AT-LEAST-32-CHARS',
+
+    // --- Telegram notifications (optional) ---
+    // Get a token from @BotFather, find your chat id from @userinfobot.
+    // Leave both blank to disable Telegram pings.
+    'telegram_bot_token' => '',
+    'telegram_chat_id'   => '',
+
+    // --- Company info shown in Terms ---
+    'legal_entity'    => 'Benux Corp',
+    'legal_dba'       => 'OTR Express Group',
+    'legal_email'     => 'info@otrexpressgroup.com',
+    'legal_state'     => 'Florida', // change to your state of formation
 ];

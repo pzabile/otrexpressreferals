@@ -78,6 +78,18 @@ For `app_secret`, generate something random. You can use
 [random.org](https://www.random.org/strings/?num=1&len=32&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new)
 or any password generator — just make it 32+ characters of gibberish.
 
+If you want **Telegram notifications** when a new referral comes in, also fill in:
+
+```php
+'telegram_bot_token' => '1234567890:AAH_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+'telegram_chat_id'   => '123456789',
+```
+
+- Get a bot token from [@BotFather](https://t.me/BotFather) (`/newbot`).
+- Get your personal chat id from [@userinfobot](https://t.me/userinfobot).
+- Send your bot any message once so Telegram opens the conversation.
+- Leave both blank to disable Telegram pings; the app still works without them.
+
 `config.php` is in `.gitignore`, so it will never leave your server —
 that's on purpose.
 

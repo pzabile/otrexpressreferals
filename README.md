@@ -11,10 +11,16 @@ it, and run the install wizard.
 ## Features
 
 - **Public landing page** explaining the program, payout rules, and pipeline.
-- **Refer a Driver** form capturing referrer + driver (name, email, phone).
+- **Refer a Driver** form capturing referrer + driver (name, email, phone),
+  with TCPA-style consent checkboxes and a link to Terms.
 - **Referrer status page** — no account needed. Enter the email or phone
   used on the referral to see every referral's timeline, admin notes, and
   rejection reasons.
+- **Terms & Conditions page** at `/terms.php` covering eligibility, payout
+  rules, driver consent, TCPA, privacy, and disputes.
+- **Telegram notification** sent to a configured chat when a new referral
+  is submitted — fire-and-forget, never blocks the user if Telegram is
+  unreachable.
 - **Admin console** (protected by email + password):
   - Queue view with filters, search, and pipeline KPIs.
   - Referral detail page with timeline, stage updates, and comments.
@@ -38,6 +44,7 @@ it, and run the install wizard.
 ├── refer-submit.php           # Form handler
 ├── thanks.php                 # Confirmation
 ├── status.php                 # Referrer status lookup
+├── terms.php                  # Terms & Conditions
 ├── install.php                # One-time setup wizard (delete after run)
 ├── config.example.php         # Copy to config.php and edit
 ├── .htaccess                  # Apache hardening rules
@@ -54,6 +61,7 @@ it, and run the install wizard.
 │   ├── auth.php               # Admin session helpers
 │   ├── statuses.php           # Status constants + labels
 │   ├── helpers.php            # CSRF, flash, formatting, escape
+│   ├── telegram.php           # Telegram notifier
 │   ├── layout-public.php
 │   └── layout-admin.php
 └── sql/

@@ -3,7 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
 require __DIR__ . '/includes/layout-public.php';
 
-$bounty = (int)($config['referral_bounty'] ?? 500);
+$bounty = (int)($config['referral_bounty'] ?? 200);
 render_public_header($config, '', 'home');
 ?>
 <section class="hero">
@@ -14,8 +14,8 @@ render_public_header($config, '', 'home');
       <p class="lead">
         Know a solid CDL driver? Send them our way. We handle recruiting,
         onboarding, and the paperwork. You earn
-        <strong class="accent">$<?= number_format($bounty) ?></strong>
-        per driver that completes 14 days on the road with OTR Express.
+        <strong class="accent-navy">$<?= number_format($bounty) ?></strong>
+        per driver who completes 14 days on the road with OTR Express Group.
       </p>
       <div class="cta-row">
         <a class="btn-primary" href="/refer.php">Refer a Driver</a>
@@ -65,19 +65,23 @@ render_public_header($config, '', 'home');
       <h3>Simple, Fair, Transparent</h3>
       <ul class="rules">
         <li>Submit the driver through the referral form with their name, email, and phone.</li>
+        <li>You confirm the driver has agreed to be contacted by OTR Express Group.</li>
         <li>Admin reviews and moves the referral through each stage: contacted, documents, insurance, orientation.</li>
         <li>If the driver is rejected, you see the reason in your status page.</li>
         <li>When the driver starts, the 14-day clock begins. On day 14 the referral is marked payout-eligible.</li>
         <li>Payout is released once the admin confirms and marks the referral paid.</li>
       </ul>
+      <p class="hint" style="margin-top: 1rem;">
+        Full program rules are in our <a href="/terms.php">Terms &amp; Conditions</a>.
+      </p>
     </div>
     <div class="card card-brand">
       <p class="eyebrow">Ready?</p>
       <h3>Send Us Your Next Driver</h3>
       <p>It takes less than a minute. You'll get a confirmation and a status link you can check anytime with your email or phone.</p>
       <div class="cta-row">
-        <a class="btn-primary" href="/refer.php">Start a Referral</a>
-        <a class="btn-ghost" href="/status.php">I already referred someone</a>
+        <a class="btn-primary" style="background:#fff; color: var(--navy);" href="/refer.php">Start a Referral</a>
+        <a class="btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.4);" href="/status.php">I already referred someone</a>
       </div>
     </div>
   </div>

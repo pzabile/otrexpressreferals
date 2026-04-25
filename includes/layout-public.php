@@ -17,27 +17,40 @@ function render_public_header(array $config, string $title, string $active = '')
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $pageTitle ?></title>
-<meta name="description" content="Refer a CDL driver to OTR Express. Track every step from referral to hire and get paid when your driver completes 14 days.">
+<meta name="description" content="Refer a CDL driver to OTR Express Group. Track every step from referral to hire and get paid when your driver completes 14 days.">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body class="site">
 <header class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="/">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-      </span>
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="OTR Express Group home">
       <span class="brand-text">
-        <span class="brand-name">OTR Express</span>
-        <span class="brand-sub">Driver Referrals</span>
+        <span class="brand-otr">OTR EXPRESS</span>
+        <span class="brand-group">GROUP</span>
       </span>
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="Primary">
       <a href="/"<?= $isActive('home') ?>>Home</a>
       <a href="/refer.php"<?= $isActive('refer') ?>>Refer a Driver</a>
       <a href="/status.php"<?= $isActive('status') ?>>Check Status</a>
-      <a class="nav-admin" href="/admin/">Admin</a>
+      <a href="/terms.php"<?= $isActive('terms') ?>>Terms</a>
+      <a class="nav-cta" href="/refer.php">Refer Now</a>
     </nav>
+    <details class="nav-mobile">
+      <summary aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="6"  x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </summary>
+      <div class="nav-mobile-menu">
+        <a href="/">Home</a>
+        <a href="/refer.php">Refer a Driver</a>
+        <a href="/status.php">Check Status</a>
+        <a href="/terms.php">Terms</a>
+      </div>
+    </details>
   </div>
 </header>
 <main class="main">
@@ -50,14 +63,31 @@ function render_public_footer(array $config): void
     ?>
 </main>
 <footer class="footer">
-  <div class="wrap footer-inner">
-    <div>
-      <p class="brand-name">OTR Express</p>
-      <p class="brand-sub">Driver Referrals Program</p>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div>
+        <span class="brand-text">
+          <span class="brand-otr">OTR EXPRESS</span>
+          <span class="brand-group">GROUP</span>
+        </span>
+        <p class="hint" style="margin-top: 0.5rem;">Driver Referrals Program</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Program</h4>
+          <a href="/refer.php">Refer a Driver</a>
+          <a href="/status.php">Check Status</a>
+          <a href="/terms.php">Terms &amp; Conditions</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="https://otrexpressgroup.com/" target="_blank" rel="noopener">OTR Express Group</a>
+          <a href="mailto:info@otrexpressgroup.com">info@otrexpressgroup.com</a>
+        </div>
+      </div>
     </div>
-    <div class="footer-right">
-      <p>&copy; <?= $year ?> OTR Express Group. All rights reserved.</p>
-      <p class="hint">Refer. Track. Get paid when your driver runs 14 days.</p>
+    <div class="footer-bottom">
+      &copy; <?= $year ?> Benux Corp dba OTR Express Group. All rights reserved.
     </div>
   </div>
 </footer>
