@@ -177,12 +177,13 @@ function admin_render_timeline(array $updates, string $currentStatus): void
       </section>
 
       <section class="card">
-        <h2>Internal Notes</h2>
+        <h2>Notes</h2>
         <p class="hint">
-          For your tracking only. Nothing in this section is shown to the
-          referrer — they only see the stage label and date. Safe to log
-          MVR, drug-test, insurance, document, or background-check details
-          here for your own records.
+          Notes can be shared with the referrer or kept internal. Check
+          &ldquo;Visible to the referrer&rdquo; to post it on their status
+          page. Internal notes are safe for MVR, drug-test, insurance,
+          document, or background-check details — those are never shown
+          to the referrer.
         </p>
         <form method="post" action="/admin/actions" class="form-stack">
           <?= csrf_field($config) ?>
@@ -190,10 +191,14 @@ function admin_render_timeline(array $updates, string $currentStatus): void
           <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
           <label class="field">
             <span class="field-label">Add a note</span>
-            <textarea name="body" class="field-input field-textarea" required placeholder="What you want to remember about this referral."></textarea>
+            <textarea name="body" class="field-input field-textarea" required placeholder="Update for the referrer, or an internal note."></textarea>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="visible_to_referrer" checked>
+            <span>Visible to the referrer (uncheck to keep internal)</span>
           </label>
           <div class="form-actions right">
-            <button class="btn-primary" type="submit">Save Note</button>
+            <button class="btn-primary" type="submit">Post Note</button>
           </div>
         </form>
 
@@ -205,7 +210,18 @@ function admin_render_timeline(array $updates, string $currentStatus): void
             <li>
               <div class="comment-meta">
                 <span><?= $c['author'] === 'SYSTEM' ? 'System' : 'Admin' ?> &middot; <?= e(fmt_date((string)$c['created_at'])) ?></span>
-                <span class="muted">Internal</span>
+                <span class="comment-meta-right">
+                  <span class="<?= (int)$c['visible_to_referrer'] === 1 ? 'ok' : 'muted' ?>">
+                    <?= (int)$c['visible_to_referrer'] === 1 ? 'Visible to referrer' : 'Internal' ?>
+                  </span>
+                  <form method="post" action="/admin/actions" class="inline-form" onsubmit="return confirm('Delete this note? This cannot be undone.');">
+                    <?= csrf_field($config) ?>
+                    <input type="hidden" name="action" value="delete_comment">
+                    <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
+                    <input type="hidden" name="comment_id" value="<?= (int)$c['id'] ?>">
+                    <button type="submit" class="btn-link-danger" aria-label="Delete note">Delete</button>
+                  </form>
+                </span>
               </div>
               <p><?= nl2br(e((string)$c['body'])) ?></p>
             </li>

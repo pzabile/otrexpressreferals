@@ -161,8 +161,12 @@ render_public_header($config, 'Terms & Conditions', 'terms');
         fixed list: Referral Submitted, Driver Contacted, Application Sent,
         Application in Progress, Carrier Review in Progress, Orientation
         Scheduled, Started Working, 14 Days Completed — Payout Eligible,
-        Paid, or Not Eligible for Payout; and</li>
-      <li>The date each stage changed.</li>
+        Paid, or Not Eligible for Payout;</li>
+      <li>The date each stage changed; and</li>
+      <li>General-status notes the Company chooses to share with the
+        Referrer (e.g. &ldquo;Driver showed up to orientation&rdquo;,
+        &ldquo;Waiting on the driver to call us back&rdquo;). Such notes
+        will not contain any information from the never-shared list below.</li>
     </ul>
     <p>
       The following information is <strong>never shown</strong> to the

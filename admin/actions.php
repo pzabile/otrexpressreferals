@@ -91,6 +91,17 @@ switch ($action) {
         flash_set('ok', 'Comment added.');
         break;
 
+    case 'delete_comment':
+        $commentId = (int)($_POST['comment_id'] ?? 0);
+        if ($commentId <= 0) {
+            flash_set('error', 'Missing comment id.');
+            redirect('/admin/referral?id=' . $referralId);
+        }
+        $del = $db->prepare('DELETE FROM comments WHERE id = ? AND referral_id = ?');
+        $del->execute([$commentId, $referralId]);
+        flash_set('ok', 'Note deleted.');
+        break;
+
     case 'mark_paid':
         $db->prepare('UPDATE referrals SET status = "HIRED_PAID", paid_at = NOW() WHERE id = ?')
             ->execute([$referralId]);
