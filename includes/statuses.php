@@ -20,13 +20,13 @@ function status_label(string $status): string
         'SUBMITTED' => 'Referral Submitted',
         'CONTACTED' => 'Driver Contacted',
         'APPLICATION_SENT' => 'Application Sent',
-        'WAITING_ON_DOCUMENTS' => 'Waiting on Documents',
-        'WAITING_ON_INSURANCE' => 'Waiting on Insurance',
+        'WAITING_ON_DOCUMENTS' => 'Application in Progress',
+        'WAITING_ON_INSURANCE' => 'Carrier Review in Progress',
         'ORIENTATION_SCHEDULED' => 'Orientation Scheduled',
         'STARTED_WORKING' => 'Started Working',
         'TWO_WEEKS_COMPLETED' => '14 Days Completed — Payout Eligible',
         'HIRED_PAID' => 'Paid',
-        'REJECTED' => 'Not Selected',
+        'REJECTED' => 'Not Eligible for Payout',
     ];
     return $labels[$status] ?? $status;
 }
@@ -37,13 +37,13 @@ function status_description(string $status): string
         'SUBMITTED' => 'We received your referral and it\'s in the queue.',
         'CONTACTED' => 'Our recruiter has reached out to the driver.',
         'APPLICATION_SENT' => 'Driver was sent the application packet.',
-        'WAITING_ON_DOCUMENTS' => 'Awaiting documents required for hiring.',
-        'WAITING_ON_INSURANCE' => 'Under insurance review.',
+        'WAITING_ON_DOCUMENTS' => 'The driver\'s application is being processed.',
+        'WAITING_ON_INSURANCE' => 'Final carrier review before orientation.',
         'ORIENTATION_SCHEDULED' => 'Driver is scheduled to attend orientation.',
         'STARTED_WORKING' => 'Driver started working. 14-day clock is running.',
         'TWO_WEEKS_COMPLETED' => 'Driver completed 14 days. We\'ll contact you on the phone or email you provided to arrange payment details.',
         'HIRED_PAID' => 'Referrer payout has been issued. Thanks for the referral!',
-        'REJECTED' => 'This referral was not accepted. See the reason on your status page.',
+        'REJECTED' => 'This referral did not result in a qualifying hire, so no payout will be issued.',
     ];
     return $d[$status] ?? '';
 }

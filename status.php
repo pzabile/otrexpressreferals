@@ -34,15 +34,6 @@ if ($hasQuery) {
             $ids = array_map(fn($r) => (int)$r['id'], $referrals);
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-            $c = $db->prepare("SELECT * FROM comments
-                WHERE referral_id IN ($placeholders) AND visible_to_referrer = 1
-                ORDER BY created_at DESC");
-            $c->execute($ids);
-            $commentsByRef = [];
-            foreach ($c->fetchAll() as $row) {
-                $commentsByRef[(int)$row['referral_id']][] = $row;
-            }
-
             $st = $db->prepare("SELECT * FROM stage_updates
                 WHERE referral_id IN ($placeholders)
                 ORDER BY created_at ASC");
@@ -53,7 +44,6 @@ if ($hasQuery) {
             }
 
             foreach ($referrals as &$r) {
-                $r['comments'] = $commentsByRef[(int)$r['id']] ?? [];
                 $r['stage_updates'] = $stagesByRef[(int)$r['id']] ?? [];
             }
             unset($r);
@@ -109,8 +99,8 @@ function render_timeline(array $updates, string $currentStatus): void
     <h1>Track Your Referrals</h1>
     <p class="lead">
       Enter the email or phone number you used when you referred the driver.
-      All your referrals will show up with a high-level timeline and any
-      admin notes shared with you.
+      All your referrals will show up with a high-level timeline of where
+      they are in our pipeline.
     </p>
   </div>
 
@@ -149,13 +139,6 @@ function render_timeline(array $updates, string $currentStatus): void
           </div>
         </div>
 
-        <?php if ($r['status'] === 'REJECTED' && !empty($r['rejection_reason'])): ?>
-          <div class="alert alert-reject">
-            <p class="alert-title">Reason this referral was not selected</p>
-            <p><?= nl2br(e((string)$r['rejection_reason'])) ?></p>
-          </div>
-        <?php endif; ?>
-
         <?php if (!empty($r['started_working_at'])): ?>
           <div class="stats-row">
             <div><span class="stat-label">Started Working</span><span><?= e(fmt_short_date((string)$r['started_working_at'])) ?></span></div>
@@ -164,26 +147,9 @@ function render_timeline(array $updates, string $currentStatus): void
           </div>
         <?php endif; ?>
 
-        <div class="two-col">
-          <div>
-            <p class="eyebrow">Timeline</p>
-            <?php render_timeline($r['stage_updates'], (string)$r['status']); ?>
-          </div>
-          <div>
-            <p class="eyebrow">Updates From Us</p>
-            <?php if (empty($r['comments'])): ?>
-              <p class="hint">No updates posted yet. Check back after the admin reviews your referral.</p>
-            <?php else: ?>
-              <ul class="comments">
-                <?php foreach ($r['comments'] as $c): ?>
-                  <li>
-                    <p class="hint">OTR Express Group &middot; <?= e(fmt_date((string)$c['created_at'])) ?></p>
-                    <p><?= nl2br(e((string)$c['body'])) ?></p>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
-            <?php endif; ?>
-          </div>
+        <div class="timeline-section">
+          <p class="eyebrow">Timeline</p>
+          <?php render_timeline($r['stage_updates'], (string)$r['status']); ?>
         </div>
       </article>
     <?php endforeach; ?>

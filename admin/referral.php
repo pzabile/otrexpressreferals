@@ -135,7 +135,7 @@ function admin_render_timeline(array $updates, string $currentStatus): void
         <h2>Update Stage</h2>
         <p class="hint">
           Moving to <strong class="accent">Started Working</strong> starts the 14-day clock automatically.
-          Moving to <strong class="accent">Rejected</strong> requires a reason that the referrer will see.
+          Marking <strong class="accent">Not Eligible for Payout</strong> requires an internal reason for your records — the referrer never sees the text, only the stage label.
         </p>
         <form method="post" action="/admin/actions" class="form-stack">
           <?= csrf_field($config) ?>
@@ -154,12 +154,12 @@ function admin_render_timeline(array $updates, string $currentStatus): void
             <input name="note" class="field-input" placeholder="e.g. Sent application packet via email">
           </label>
           <label class="field">
-            <span class="field-label">Reason shown to referrer (required if Not Selected)</span>
-            <textarea name="rejection_reason" class="field-input field-textarea" placeholder="Use a generic reason. Do NOT include MVR specifics, drug-test results, medical info, or background-check details — this text is shown to the referrer."><?= e((string)($r['rejection_reason'] ?? '')) ?></textarea>
-            <span class="hint" style="margin-top:0.4rem">Safe examples: &ldquo;Did not pass our screening criteria&rdquo;, &ldquo;Driver withdrew from the process&rdquo;, &ldquo;Did not start orientation&rdquo;.</span>
+            <span class="field-label">Internal reason (required if Not Eligible for Payout)</span>
+            <textarea name="rejection_reason" class="field-input field-textarea" placeholder="Why this referral isn't eligible. Admin-only — never shown to the referrer."><?= e((string)($r['rejection_reason'] ?? '')) ?></textarea>
+            <span class="hint" style="margin-top:0.4rem">For your records only. The referrer just sees the stage label &ldquo;Not Eligible for Payout&rdquo;.</span>
           </label>
           <div class="form-actions between">
-            <p class="hint">Saves a timeline entry. The stage label is visible to the referrer; your internal note is not.</p>
+            <p class="hint">Saves a timeline entry. Only the stage label is visible to the referrer; your notes and reasons stay internal.</p>
             <button class="btn-primary" type="submit">Save Update</button>
           </div>
         </form>
@@ -169,49 +169,43 @@ function admin_render_timeline(array $updates, string $currentStatus): void
         <h2>Timeline</h2>
         <?php admin_render_timeline($stageUpdates, (string)$r['status']); ?>
         <?php if ($r['status'] === 'REJECTED' && !empty($r['rejection_reason'])): ?>
-          <div class="alert alert-reject">
-            <p class="alert-title">Rejection reason shown to referrer</p>
+          <div class="alert">
+            <p class="alert-title">Internal reason (admin-only)</p>
             <p><?= nl2br(e((string)$r['rejection_reason'])) ?></p>
           </div>
         <?php endif; ?>
       </section>
 
       <section class="card">
-        <h2>Comments</h2>
+        <h2>Internal Notes</h2>
         <p class="hint">
-          <strong>Privacy:</strong> Anything you mark &ldquo;Visible to the referrer&rdquo;
-          is shown on their status page. Never paste MVR records, drug-test
-          results, medical info, background-check findings, or other
-          sensitive driver data into a visible comment — keep those internal.
+          For your tracking only. Nothing in this section is shown to the
+          referrer — they only see the stage label and date. Safe to log
+          MVR, drug-test, insurance, document, or background-check details
+          here for your own records.
         </p>
         <form method="post" action="/admin/actions" class="form-stack">
           <?= csrf_field($config) ?>
           <input type="hidden" name="action" value="add_comment">
           <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
           <label class="field">
-            <span class="field-label">New comment</span>
-            <textarea name="body" class="field-input field-textarea" required placeholder="Update the referrer, leave an internal note, anything."></textarea>
-          </label>
-          <label class="checkbox">
-            <input type="checkbox" name="visible_to_referrer">
-            <span>Visible to the referrer (default is internal-only)</span>
+            <span class="field-label">Add a note</span>
+            <textarea name="body" class="field-input field-textarea" required placeholder="What you want to remember about this referral."></textarea>
           </label>
           <div class="form-actions right">
-            <button class="btn-primary" type="submit">Post Comment</button>
+            <button class="btn-primary" type="submit">Save Note</button>
           </div>
         </form>
 
         <ul class="comments mt">
           <?php if (empty($comments)): ?>
-            <li class="hint">No comments yet. Leave one above.</li>
+            <li class="hint">No notes yet. Add one above.</li>
           <?php endif; ?>
           <?php foreach ($comments as $c): ?>
             <li>
               <div class="comment-meta">
                 <span><?= $c['author'] === 'SYSTEM' ? 'System' : 'Admin' ?> &middot; <?= e(fmt_date((string)$c['created_at'])) ?></span>
-                <span class="<?= (int)$c['visible_to_referrer'] === 1 ? 'ok' : 'muted' ?>">
-                  <?= (int)$c['visible_to_referrer'] === 1 ? 'Visible to referrer' : 'Internal' ?>
-                </span>
+                <span class="muted">Internal</span>
               </div>
               <p><?= nl2br(e((string)$c['body'])) ?></p>
             </li>

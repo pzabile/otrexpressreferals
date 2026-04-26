@@ -152,23 +152,26 @@ render_public_header($config, 'Terms & Conditions', 'terms');
     <p>
       Because the Referrer asked us to consider a specific Referred Driver
       and the Payout depends on whether that Driver is hired and stays on
-      the road, we share <strong>limited, high-level status</strong> with
-      the Referrer through the Site. Specifically, the Referrer can see:
+      the road, we share a <strong>limited, high-level status label</strong>
+      with the Referrer through the Site. The Referrer can see only:
     </p>
     <ul>
       <li>The driver's name (which the Referrer themselves provided);</li>
-      <li>The current pipeline stage label (e.g. "Driver Contacted",
-        "Application Sent", "Waiting on Documents", "Started Working");</li>
-      <li>The date the stage changed;</li>
-      <li>A general "not selected" notice if the Referred Driver is not hired
-        (worded generically — no specific reasons revealed); and</li>
-      <li>Notes the Company explicitly chooses to share with the Referrer.</li>
+      <li>The current pipeline stage label, drawn exclusively from this
+        fixed list: Referral Submitted, Driver Contacted, Application Sent,
+        Application in Progress, Carrier Review in Progress, Orientation
+        Scheduled, Started Working, 14 Days Completed — Payout Eligible,
+        Paid, or Not Eligible for Payout; and</li>
+      <li>The date each stage changed.</li>
     </ul>
     <p>
       The following information is <strong>never shown</strong> to the
       Referrer through the Site:
     </p>
     <ul>
+      <li>Specific rejection reasons, screening results, or eligibility
+        details of any kind;</li>
+      <li>Free-text notes between Company staff;</li>
       <li>Motor Vehicle Records (MVR), accident history, or specific
         violations;</li>
       <li>Drug-test or alcohol-test results, including pass/fail status;</li>
@@ -177,9 +180,7 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       <li>Background-check findings, criminal-history information, or any
         information regulated by the Fair Credit Reporting Act (15 U.S.C.
         § 1681 et seq.);</li>
-      <li>Specific reasons for non-hire that fall under the categories
-        above;</li>
-      <li>Internal notes between Company staff;</li>
+      <li>Insurance underwriting details;</li>
       <li>The Referred Driver's wages, settlements, or compensation;</li>
       <li>Documents the Referred Driver submits to the Company.</li>
     </ul>

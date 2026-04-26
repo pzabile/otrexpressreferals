@@ -78,6 +78,20 @@ render_public_header($config, 'Refer a Driver', 'refer');
         Required by the TCPA and our Terms. The driver must have agreed to
         be contacted before you submit their information.
       </p>
+      <div class="disclosure">
+        <p class="disclosure-title">What we share with you about your referral</p>
+        <p>
+          By participating in the referral program, you understand that OTR
+          Express Group may provide limited referral-status updates to the
+          person who submitted the referral. These updates may include
+          whether the referral was received, contacted, in progress, under
+          carrier review, scheduled for orientation, started working, payout
+          eligible, paid, or not eligible for payout. OTR Express Group will
+          not share private applicant details, documents, medical
+          information, background results, insurance details, or specific
+          rejection reasons with the referrer.
+        </p>
+      </div>
       <div class="consent-block">
         <label class="checkbox">
           <input type="checkbox" name="consent_driver" value="1" required <?= !empty($old['consent_driver']) ? 'checked' : '' ?>>
