@@ -102,6 +102,24 @@ switch ($action) {
         flash_set('ok', 'Note deleted.');
         break;
 
+    case 'set_share_consent':
+        $value = (string)($_POST['share_with_referrer'] ?? '');
+        if (!in_array($value, ['PENDING', 'YES', 'NO'], true)) {
+            flash_set('error', 'Invalid consent value.');
+            redirect('/admin/referral?id=' . $referralId);
+        }
+        $db->prepare('UPDATE referrals SET share_with_referrer = ?, share_consent_at = NOW() WHERE id = ?')
+            ->execute([$value, $referralId]);
+        $note = match ($value) {
+            'YES' => 'Driver consented to share pipeline status with referrer.',
+            'NO'  => 'Driver declined to share pipeline status with referrer; referrer view restricted.',
+            default => 'Driver share-consent reset to pending.',
+        };
+        $db->prepare('INSERT INTO comments (referral_id, author, body, visible_to_referrer) VALUES (?, "SYSTEM", ?, 0)')
+            ->execute([$referralId, $note]);
+        flash_set('ok', 'Driver share consent saved.');
+        break;
+
     case 'mark_paid':
         $db->prepare('UPDATE referrals SET status = "HIRED_PAID", paid_at = NOW() WHERE id = ?')
             ->execute([$referralId]);

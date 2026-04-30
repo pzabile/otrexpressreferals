@@ -137,6 +137,11 @@ function render_timeline(array $updates, string $currentStatus): void
   <?php elseif (!empty($referrals)): ?>
     <div class="stack">
     <?php foreach ($referrals as $r): ?>
+      <?php
+        $share = (string)($r['share_with_referrer'] ?? 'PENDING');
+        $isTerminal = in_array($r['status'], ['HIRED_PAID', 'REJECTED'], true);
+        $hideDetails = $share === 'NO' && !$isTerminal;
+      ?>
       <article class="card">
         <div class="ref-head">
           <div>
@@ -144,40 +149,51 @@ function render_timeline(array $updates, string $currentStatus): void
             <h2><?= e((string)$r['driver_name']) ?></h2>
           </div>
           <div class="ref-head-right">
-            <?= status_badge((string)$r['status']) ?>
-            <p class="hint right"><?= e(status_description((string)$r['status'])) ?></p>
-          </div>
-        </div>
-
-        <?php if (!empty($r['started_working_at'])): ?>
-          <div class="stats-row">
-            <div><span class="stat-label">Started Working</span><span><?= e(fmt_short_date((string)$r['started_working_at'])) ?></span></div>
-            <div><span class="stat-label">14-Day Eligibility</span><span><?= e(fmt_short_date($r['payout_eligible_at'] ?? null)) ?></span></div>
-            <div><span class="stat-label">Paid Out</span><span><?= !empty($r['paid_at']) ? e(fmt_short_date((string)$r['paid_at'])) : 'Pending' ?></span></div>
-          </div>
-        <?php endif; ?>
-
-        <div class="two-col">
-          <div>
-            <p class="eyebrow">Timeline</p>
-            <?php render_timeline($r['stage_updates'], (string)$r['status']); ?>
-          </div>
-          <div>
-            <p class="eyebrow">Updates From Us</p>
-            <?php if (empty($r['comments'])): ?>
-              <p class="hint">No updates posted yet. Check back after the admin reviews your referral.</p>
+            <?php if ($hideDetails): ?>
+              <span class="chip status-slate"><span class="dot"></span>In Progress</span>
             <?php else: ?>
-              <ul class="comments">
-                <?php foreach ($r['comments'] as $c): ?>
-                  <li>
-                    <p class="hint">OTR Express Group &middot; <?= e(fmt_date((string)$c['created_at'])) ?></p>
-                    <p><?= nl2br(e((string)$c['body'])) ?></p>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
+              <?= status_badge((string)$r['status']) ?>
+              <p class="hint right"><?= e(status_description((string)$r['status'])) ?></p>
             <?php endif; ?>
           </div>
         </div>
+
+        <?php if ($hideDetails): ?>
+          <div class="alert">
+            <p class="alert-title">Driver requested privacy</p>
+            <p>The driver preferred to keep their detailed progress private. Your referral is being processed normally — we'll contact you on the phone or email you provided if and when this referral results in a payout.</p>
+          </div>
+        <?php else: ?>
+          <?php if (!empty($r['started_working_at'])): ?>
+            <div class="stats-row">
+              <div><span class="stat-label">Started Working</span><span><?= e(fmt_short_date((string)$r['started_working_at'])) ?></span></div>
+              <div><span class="stat-label">14-Day Eligibility</span><span><?= e(fmt_short_date($r['payout_eligible_at'] ?? null)) ?></span></div>
+              <div><span class="stat-label">Paid Out</span><span><?= !empty($r['paid_at']) ? e(fmt_short_date((string)$r['paid_at'])) : 'Pending' ?></span></div>
+            </div>
+          <?php endif; ?>
+
+          <div class="two-col">
+            <div>
+              <p class="eyebrow">Timeline</p>
+              <?php render_timeline($r['stage_updates'], (string)$r['status']); ?>
+            </div>
+            <div>
+              <p class="eyebrow">Updates From Us</p>
+              <?php if (empty($r['comments'])): ?>
+                <p class="hint">No updates posted yet. Check back after the admin reviews your referral.</p>
+              <?php else: ?>
+                <ul class="comments">
+                  <?php foreach ($r['comments'] as $c): ?>
+                    <li>
+                      <p class="hint">OTR Express Group &middot; <?= e(fmt_date((string)$c['created_at'])) ?></p>
+                      <p><?= nl2br(e((string)$c['body'])) ?></p>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endif; ?>
       </article>
     <?php endforeach; ?>
     </div>

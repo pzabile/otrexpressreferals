@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS referrals (
   driver_phone VARCHAR(30) NOT NULL,
   status VARCHAR(40) NOT NULL DEFAULT 'SUBMITTED',
   rejection_reason TEXT NULL,
+  share_with_referrer VARCHAR(10) NOT NULL DEFAULT 'PENDING',
+  share_consent_at DATETIME NULL,
   started_working_at DATETIME NULL,
   payout_eligible_at DATETIME NULL,
   paid_at DATETIME NULL,

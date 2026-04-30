@@ -847,6 +847,54 @@ select.field-input {
   .cta-row .btn-primary, .cta-row .btn-ghost { flex: 1 1 auto; }
 }
 
+/* ========== Driver share-consent card (admin) ========== */
+.consent-card {
+  border-left: 4px solid var(--blue);
+  background: var(--blue-faint);
+}
+.consent-card .hint { color: var(--text-mid); }
+.consent-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+@media (min-width: 700px) {
+  .consent-head { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+}
+.consent-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.radio-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  font-weight: 600;
+}
+.radio-pill input { accent-color: var(--blue); }
+.radio-pill:hover { border-color: var(--blue); color: var(--blue); }
+.radio-pill.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue-dark);
+}
+.radio-pill.active span { color: #fff; }
+
+.consent-pending { color: var(--amber); background: var(--amber-bg); border-color: #fde68a; }
+.consent-yes     { color: #047857; background: var(--emerald-bg); border-color: #a7f3d0; }
+.consent-no      { color: var(--rose-text); background: var(--rose-bg); border-color: #fecaca; }
+
 /* ========== Inline delete buttons in comment meta ========== */
 .comment-meta-right {
   display: inline-flex;

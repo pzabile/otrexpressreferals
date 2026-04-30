@@ -189,15 +189,17 @@ render_public_header($config, 'Terms & Conditions', 'terms');
       <li>Documents the Referred Driver submits to the Company.</li>
     </ul>
     <p>
-      <strong>Notice to the Referred Driver.</strong> At first contact the
-      Company will tell the Referred Driver that they were referred, by
-      whom, and that high-level pipeline status (as described above) will
-      be shared with the Referrer for the limited purpose of administering
-      this referral. If the Referred Driver objects to this sharing, the
-      Company will (a) stop sharing further status with the Referrer and
-      (b) at the Referred Driver's request, suppress past status from the
-      Referrer's view going forward. Continuing the application after this
-      notice means the Referred Driver agrees to the limited disclosure.
+      <strong>Notice and consent at first contact.</strong> At first
+      contact the Company will (a) tell the Referred Driver that they were
+      referred and by whom, (b) describe the high-level pipeline labels
+      that may be shared with the Referrer, and (c) ask the Referred
+      Driver whether they consent to that sharing. The Company will record
+      the Referred Driver's answer (Yes, No, or Pending) on the referral.
+      If the Referred Driver answers <strong>No</strong>, the Referrer will
+      see only a generic &ldquo;in progress&rdquo; notice (and the final
+      Paid or Not Eligible for Payout outcome) — no stage progression and
+      no notes will be exposed. The Referred Driver may change this
+      decision at any time by contacting the Company.
     </p>
     <p>
       The Company applies these limits because pre-employment screening

@@ -86,6 +86,48 @@ function admin_render_timeline(array $updates, string $currentStatus): void
   <?php if ($flashOk): ?><div class="alert alert-ok"><?= e($flashOk) ?></div><?php endif; ?>
   <?php if ($flashErr): ?><div class="alert alert-error"><?= e($flashErr) ?></div><?php endif; ?>
 
+  <?php
+    $share = (string)($r['share_with_referrer'] ?? 'PENDING');
+    $shareLabels = [
+      'PENDING' => ['Pending', 'consent-pending', 'You haven\'t asked the driver yet. Referrer sees the full pipeline by default.'],
+      'YES'     => ['Driver said YES', 'consent-yes', 'Driver agreed to share status with the referrer. Referrer sees the full pipeline.'],
+      'NO'      => ['Driver said NO', 'consent-no', 'Driver declined. Referrer only sees a high-level "in progress" notice (and final Paid / Not Eligible state).'],
+    ];
+    $sl = $shareLabels[$share] ?? $shareLabels['PENDING'];
+  ?>
+  <section class="card consent-card">
+    <div class="consent-head">
+      <div>
+        <p class="eyebrow">Driver Consent — Share Status with Referrer</p>
+        <p class="hint">Ask the driver at first contact: <em>&ldquo;<?= e((string)$r['referrer_name']) ?> referred you. Are you OK with us sharing high-level pipeline status with them?&rdquo;</em></p>
+      </div>
+      <span class="chip <?= e($sl[1]) ?>"><span class="dot"></span><?= e($sl[0]) ?></span>
+    </div>
+    <p class="hint" style="margin: 0.4rem 0 0.9rem;"><?= e($sl[2]) ?>
+      <?php if (!empty($r['share_consent_at'])): ?>
+        <br><span class="muted">Recorded: <?= e(fmt_date((string)$r['share_consent_at'])) ?></span>
+      <?php endif; ?>
+    </p>
+    <form method="post" action="/admin/actions" class="consent-form">
+      <?= csrf_field($config) ?>
+      <input type="hidden" name="action" value="set_share_consent">
+      <input type="hidden" name="referral_id" value="<?= (int)$r['id'] ?>">
+      <label class="radio-pill <?= $share === 'PENDING' ? 'active' : '' ?>">
+        <input type="radio" name="share_with_referrer" value="PENDING" <?= $share === 'PENDING' ? 'checked' : '' ?>>
+        <span>Pending</span>
+      </label>
+      <label class="radio-pill <?= $share === 'YES' ? 'active' : '' ?>">
+        <input type="radio" name="share_with_referrer" value="YES" <?= $share === 'YES' ? 'checked' : '' ?>>
+        <span>Yes — driver agreed</span>
+      </label>
+      <label class="radio-pill <?= $share === 'NO' ? 'active' : '' ?>">
+        <input type="radio" name="share_with_referrer" value="NO" <?= $share === 'NO' ? 'checked' : '' ?>>
+        <span>No — driver declined</span>
+      </label>
+      <button type="submit" class="btn-primary">Save</button>
+    </form>
+  </section>
+
   <div class="detail-grid">
     <aside class="card">
       <h2>Driver</h2>
